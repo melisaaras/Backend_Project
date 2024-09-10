@@ -3,6 +3,7 @@ package com.tpe.entity.concretes.business;
 //12.ADIM: FARKLI ZAMAN DİLİMLERİNİ TEMSİL EDEN EĞİTİM DÖNEMLERİ CLASSI OLUŞTURDUK
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.tpe.entity.enums.Term;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,6 +13,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDate;
+import java.util.List;
 
 @Entity
 
@@ -46,4 +48,9 @@ public class EducationTerm {
     @Column(name="last_registration_date")
     @NotNull(message = "Last registration date must not be empty")
     private LocalDate lastRegistrationDate;//son kayıt zamanı
+
+    //18.ADIM:İLİŞKİNİN TARAFINI EDUCATİONTERM CLASSTA MAPPEDBYLA BELİRLEMEK
+    @OneToMany (mappedBy = "educationTerm", cascade = CascadeType.ALL)
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    private List<LessonProgram> lessonProgram;
 }

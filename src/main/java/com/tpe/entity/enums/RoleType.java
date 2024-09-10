@@ -1,6 +1,7 @@
 package com.tpe.entity.enums;
 
 //3.ADIM: BİR DEFA SETLENİP SONRA DEĞİŞTİRİLEMEYECEK DEĞERLER
+
 public enum RoleType {
     ADMIN("Admin"),
     TEACHER("Teacher"),

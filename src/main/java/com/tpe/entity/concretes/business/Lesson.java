@@ -1,14 +1,13 @@
 package com.tpe.entity.concretes.business;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.Set;
 
 //10.ADIM:DERSLERİ TUTACAĞIMIZ ENTİTY CLASSIDIR.
 @Entity
@@ -28,6 +27,11 @@ public class Lesson {
     private Integer creditScore;
 
     private Boolean isCompulsory; //dersin zorunluluğu
+
+    //17.ADIM:İLİŞKİNİN TARAFINI MAPPEDBYLA BELİRLEMEK
+    @JsonIgnore
+    @ManyToMany(mappedBy = "lessons", cascade = CascadeType.REMOVE) //cascade = CascadeType.REMOVE; lesson silinirse, onun lessonprogramı da silinsin.
+    private Set<LessonProgram> lessonPrograms;
 
 
 

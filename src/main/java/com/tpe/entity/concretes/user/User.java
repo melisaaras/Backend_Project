@@ -1,7 +1,10 @@
 package com.tpe.entity.concretes.user;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.tpe.entity.concretes.business.LessonProgram;
+import com.tpe.entity.concretes.business.Meet;
 import com.tpe.entity.concretes.business.StudentInfo;
 import com.tpe.entity.enums.Gender;
 import lombok.*;
@@ -9,13 +12,15 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Set;
+
 
 //1.ADIM: DBDEKİ TABLOMUZU DİZAYN EDİYORUZ.
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder(toBuilder = true) //nesneyi klonlayıp üzerine setleme işlemi yapmayı sağlar.
+@Builder(toBuilder = true) //nesneyi klonlayıp üzerine setleme işlemi yapmayı sağlar.var olan bir nesneyi baz alarak yeni bir nesne oluşturmayı sağlar. Bu özellik, var olan nesneyi klonlayıp sadece belirli alanları değiştirerek yeni bir nesne oluşturmak istediğinizde kullanışlıdır.
 
 @Entity
 @Table(name = "t_user")
@@ -77,8 +82,31 @@ public class User {
     private UserRole userRole;
 
 
+
     //9.ADIM:
     @OneToMany(mappedBy = "teacher", cascade = CascadeType.REMOVE) //teacher isimli değişken hangi classtaysa ilişkiyi o yönetsin. teacher veya student yazmamız fark etmez.
     private List<StudentInfo> studentInfos;
 
+
+
+    //21.ADIM:USER CLASSA LESSONPROGRAM EKLENECEK
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(
+            name = "user_lessonprogram",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "lesson_program_id")
+    )
+    private Set<LessonProgram> lessonProgramList;
+
+    @ManyToMany //bir meeti birden fazla usera atayabiliriz, bir userı da birden fazla meeta atayabiliriz.
+    @JsonIgnore
+    @JoinTable(
+            name = "meet_student_table",
+            joinColumns = @JoinColumn(name = "student_id"),
+            inverseJoinColumns = @JoinColumn(name = "meet_id")
+
+    )
+    private List<Meet> meetList;
+//meet tarafındaki jointable ile aynı tabloyu oluşturur. çünkü sütun isimleri aynı
 }

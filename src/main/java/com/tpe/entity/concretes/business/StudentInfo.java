@@ -51,7 +51,12 @@ public class StudentInfo {
 
     //11.ADIM: STUDENTINFO VE LESSON ARASINDAKİ İLİŞKİ KURDUK
     @ManyToOne
-    private  Lesson lesson; //info tarafından lessona baktığımız zaman one olarak görürüz. çünkü sınıftaki 20 tane öğrencinin tek lessonı vardır. çünkü lesson içindeki değerleri aynı olmaz.
+    private Lesson lesson; //studentinfo tarafından lessona baktığımız zaman one olarak görürüz. çünkü sınıftaki 20 tane öğrencinin tek lessonı vardır. çünkü lesson içindeki değerleri aynı olmaz.
+    //her dersin birden fazla studentinfosu vardır.
 
+
+    //14.ADIM: STUDENTINFO VE EducationTerm  ARASINDAKİ İLİŞKİ KURDUK
+    @OneToOne
+    private EducationTerm educationTerm;
 
 }
