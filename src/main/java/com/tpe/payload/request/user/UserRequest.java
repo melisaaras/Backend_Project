@@ -11,4 +11,6 @@ import lombok.experimental.SuperBuilder;
 @SuperBuilder //parent classtan chil class ürettiyseniz, ve builder methodlarını da kullanacaksanız, parent ve child classlara @SuperBuilder anno. kullanmalısınız
 public class UserRequest extends BaseUserRequest {
 
+
+
 }

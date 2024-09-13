@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-//1.ADIM:
+
 
 @RestController //Bu sınıfın bir Spring Rest Controller olduğunu belirtir. Bu, HTTP isteklerini işleyip HTTP cevapları döneceği anlamına gelir.
 @RequestMapping("/auth") //Bu annotation, sınıfa gelen tüm isteklerin /auth ile başlaması gerektiğini ifade eder. Yani bu sınıf altında /login gibi alt yollar tanımlanabilir.
