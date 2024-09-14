@@ -1,7 +1,9 @@
 package com.tpe.service.validator;
 
+import com.tpe.entity.concretes.user.User;
 import com.tpe.exception.ConflictException;
 import com.tpe.payload.messages.ErrorMessages;
+import com.tpe.payload.request.abstracts.AbstractUserRequest;
 import com.tpe.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
@@ -34,6 +36,35 @@ public class UniquePropertyValidator {
         }
 
 
+    }
+
+
+    public void checkUniqueProperties(User user, AbstractUserRequest abstractUserRequest){
+        String updatedUsername = "";
+        String updatedSnn = "";
+        String updatedPhone = "";
+        String updatedEmail = "";
+        boolean isChanced = false;
+        if(!user.getUsername().equalsIgnoreCase(abstractUserRequest.getUsername())){
+            updatedUsername = abstractUserRequest.getUsername();
+            isChanced = true;
+        }
+        if(!user.getSsn().equalsIgnoreCase(abstractUserRequest.getSsn())){
+            updatedSnn = abstractUserRequest.getSsn();
+            isChanced = true;
+        }
+        if(!user.getPhoneNumber().equalsIgnoreCase(abstractUserRequest.getPhoneNumber())){
+            updatedPhone = abstractUserRequest.getPhoneNumber();
+            isChanced = true;
+        }
+        if(!user.getEmail().equalsIgnoreCase(abstractUserRequest.getEmail())){
+            updatedEmail = abstractUserRequest.getEmail();
+            isChanced = true;
+        }
+
+        if(isChanced) {
+            checkDuplicate(updatedUsername, updatedSnn, updatedPhone, updatedEmail);
+        }
 
     }
 }

@@ -8,6 +8,8 @@ import com.tpe.repository.user.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserRoleService {
@@ -17,5 +19,9 @@ public class UserRoleService {
     public UserRole getUserRole(RoleType roleType){
         return userRoleRepository.findByEnumRoleEquals(roleType).orElseThrow(()-> new ResourceNotFoundException(ErrorMessages.ROLE_NOT_FOUND));
         //UserRolede enum değişken olmadığı için, olmayan bir değişkenin ismini kullandıysak findByEnumRoleEquals bu türetilen bir method değildir. jpql,hql veya sql yazacağımız bir methoddur
+    }
+
+    public List<UserRole> getAllUserRole(){
+        return userRoleRepository.findAll();
     }
 }

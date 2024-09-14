@@ -9,17 +9,14 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 
 
 @RestController //Bu sınıfın bir Spring Rest Controller olduğunu belirtir. Bu, HTTP isteklerini işleyip HTTP cevapları döneceği anlamına gelir.
 @RequestMapping("/auth") //Bu annotation, sınıfa gelen tüm isteklerin /auth ile başlaması gerektiğini ifade eder. Yani bu sınıf altında /login gibi alt yollar tanımlanabilir.
 @RequiredArgsConstructor //final olarak tanımlanan alanlar için otomatik olarak bir constructor oluşturur. Böylece AuthenticationService nesnesinin bağımlılığı Spring tarafından constructor injection ile sağlanır.
 public class AuthenticationController {
-
 
 
     private final AuthenticationService authenticationService;

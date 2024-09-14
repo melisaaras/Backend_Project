@@ -2,6 +2,8 @@ package com.tpe.payload.mappers;
 
 import com.tpe.entity.concretes.user.User;
 import com.tpe.payload.request.abstracts.BaseUserRequest;
+import com.tpe.payload.request.user.TeacherRequest;
+import com.tpe.payload.request.user.UserRequest;
 import com.tpe.payload.response.user.StudentResponse;
 import com.tpe.payload.response.user.TeacherResponse;
 import com.tpe.payload.response.user.UserResponse;
@@ -82,6 +84,36 @@ public class UserMapper {
     }
 
 
+    public User mapUserRequestToUpdatedUser(UserRequest userRequest, Long userId){
+        return User.builder()
+                .id(userId)
+                .username(userRequest.getUsername())
+                .name(userRequest.getName())
+                .surname(userRequest.getSurname())
+                .password(userRequest.getPassword())
+                .ssn(userRequest.getSsn())
+                .birthDay(userRequest.getBirthDay())
+                .birthPlace(userRequest.getBirthPlace())
+                .phoneNumber(userRequest.getPhoneNumber())
+                .gender(userRequest.getGender())
+                .email(userRequest.getEmail())
+                .build();
+    }
 
-
+    public User mapTeacherRequestToUser(TeacherRequest teacherRequest){
+        return User.builder()
+                .name(teacherRequest.getName())
+                .surname(teacherRequest.getSurname())
+                .ssn(teacherRequest.getSsn())
+                .username(teacherRequest.getUsername())
+                .birthDay(teacherRequest.getBirthDay())
+                .birthPlace(teacherRequest.getBirthPlace())
+                .password(teacherRequest.getPassword())
+                .phoneNumber(teacherRequest.getPhoneNumber())
+                .email(teacherRequest.getEmail())
+                .isAdvisor(teacherRequest.getIsAdvisorTeacher())
+                .built_in(teacherRequest.getBuiltIn())
+                .gender(teacherRequest.getGender())
+                .build();
+    }
 }
