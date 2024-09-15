@@ -40,4 +40,15 @@ public interface UserRepository extends JpaRepository<User,Long> {
     long countAdmin(RoleType roleType);
 
     List<User> findByAdvisorTeacherId(Long id);
+
+    @Query("SELECT u from User u where u.isAdvisor =?1")
+    List<User> findAllByAdvisor(Boolean aTrue); //aTrue, değişken ismidir
+
+    @Query(value = "select max (u.studentNumber) from User u")
+    int getMaxStudentNumber();
+
+    @Query(value = "select (count (u)>0) from User u where u.userRole.roleType = ?1")
+    boolean findStudent(RoleType roleType);
+
+
 }

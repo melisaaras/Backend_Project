@@ -1,9 +1,12 @@
 package com.tpe.controller.user;
 
 import com.tpe.payload.request.user.TeacherRequest;
+import com.tpe.payload.request.user.UserRequest;
 import com.tpe.payload.response.ResponseMessage;
+import com.tpe.payload.response.abstracts.BaseUserResponse;
 import com.tpe.payload.response.user.StudentResponse;
 import com.tpe.payload.response.user.TeacherResponse;
+import com.tpe.payload.response.user.UserResponse;
 import com.tpe.service.user.TeacherService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -40,9 +43,34 @@ public class TeacherController {
 
     // Not: ODEVVV updateTeacherById() ***************************************************
 
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
+    @PutMapping("/update/{userId}")  // http://localhost:8080/user/update/1
+    public ResponseMessage<TeacherResponse>updateTeacherForManagers(@RequestBody @Valid TeacherRequest teacherRequest,
+                                                                    @PathVariable Long userId){
+        return teacherService.updateTeacherForManagers(teacherRequest,userId); //yöneticilerin kullanacağı bir method olduğu için password dahil edildi.
+    }
+
+
     // Not: ODEVV SaveAdvisorTeacherByTeacherId() bir teacherın idsiyle o teacherı advisor yapıyorsunuz****************************************
 
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
+    @PatchMapping("/saveAdvisorTeacher/{teacherId}") // http://localhost:8080/teacher/saveAdvisorTeacher/1
+    public ResponseMessage<UserResponse> savedAdvisorTeacher (@PathVariable Long teacherId){
+        return teacherService.saveAdvisorTeacher(teacherId);
+    }
+
+
     // Not : ODEVV  deleteAdvisorTeacherById() *******************************************
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANTMANAGER')")
+    @DeleteMapping("/deleteAdvisorTeacherById/{id}")// http://localhost:8080/teacher/deleteAdvisorTeacherById/1
+    public ResponseMessage<UserResponse> deleteAdvisorTeacherById(@PathVariable Long id){
+        return teacherService.deleteAdvisorTeacherById(id);
+    }
 
     // Not :  getAllAdvisorTeacher() *****************************************************
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
+    @GetMapping("/getAllAdvisorTeacher") // http://localhost:8080/teachers/getAllAdvisorTeacher/
+    public List<UserResponse> getAllAdvisorTeacher(){
+        return teacherService.getAllAdvisorTeacher();
+}
 }
