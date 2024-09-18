@@ -31,6 +31,7 @@ public class ContactMessageController {
 
 
 
+    //clienttan gelen ContactMessageRequest (name,email,subject,messge gibi) bilgileri kaydetmek için
     @PostMapping("/save") //http://localhost:8080/contactMessages/save + POST //Bu path gelirse ve path gelirken Post mapping kullanıyorsa bu methoda yönlendiriyoruz.
     // Handles POST requests to /contactMessages/save. The method takes in a contact message request, validates it, and then saves it using the service layer. It returns a response message with the saved data.
     public ResponseMessage<ContactMessageResponse> saveContact(@RequestBody @Valid ContactMessageRequest contactMessageRequest){
@@ -48,6 +49,7 @@ public class ContactMessageController {
 
 
 
+    //verileri page formatında görebilmek için
     //15.ADIM: BÜTÜN CONTACTMESSAGELARI PAGEABLE VERSİYONLA GETALL.SERVİCE TARAFINDA BU YAPIYI PAGEABLE OLARAK DBDEN ÇEKİLİP CLİENTA GÖNDERİLMESİNİ SAĞLAMAK İÇİN.
     @GetMapping("/getAll") //http://localhost:8080/contactMessages/getAll + GET
     // This annotation maps HTTP GET requests to the getAl method. When a GET request is made to /contactMessages/getAll, this method is executed.You can control the page number, size, sorting field, and sorting direction using query parameters.
@@ -65,6 +67,7 @@ public class ContactMessageController {
 
 
 
+    // kullanıcıların belirli bir e-posta adresine sahip iletişim mesajlarını ararken verileri kolayca sayfalamalarına ve sıralamalarına olanak sağlar
     //17.ADIM: EMAİL ADRESİNDEN GELEN VERİLERİ GETİR
     @GetMapping("/searchByEmail") //http://localhost:8080/contactMessages/searchByEmail?email=aaa@bb.com //Handles GET requests to /contactMessages/searchByEmail. It searches for contact messages by a specific email and returns the results in a paginated(sayfalandırılmış) format. Similar to getAll, you can control the page, size, and sorting.
     public Page<ContactMessageResponse> searchByEmail(
@@ -92,6 +95,9 @@ public class ContactMessageController {
         return contactMessageService.searchBySubject(subject,page,size,sort,type);
     }*/
 
+
+
+    //kullanıcıların konu başlığına göre arama yapabilmesini sağlar ve arama sonuçlarını sayfa numarası, sayfa boyutu, sıralama alanı ve sıralama yönüne göre filtrelemeye olanak tanır.
     @GetMapping("/searchBySubject")// http://localhost:8080/contactMessages/searchBySubject?subject=deneme
     public Page<ContactMessageResponse> searchBySubject(
             @RequestParam(value = "subject") String subject,
@@ -118,10 +124,14 @@ public class ContactMessageController {
         return contactMessageService.searchByDateBetween(startDate,endDate,page,size,sort,type);
     }*/
 
+
+
+    // kullanıcıların bir başlangıç ve bitiş tarihi belirleyerek bu tarihler arasındaki iletişim mesajlarını almasını sağlar.
     @GetMapping("/searchBetweenDates") // http://localhost:8080/contactMessages/searchBetweenDates?beginDate=2023-09-13&endDate=2023-09-15
     public ResponseEntity<List<ContactMessage>> searchByDateBetween( //Clienta döndürdüğünüz nesnelerde, gizli tutulmasını istediğiniz bilgiler yoksa (password gibi) entity döndürebiliriz.
             @RequestParam(value = "beginDate") String beginDateString,
             @RequestParam(value = "endDate") String endDateString){
+
         List<ContactMessage>contactMessages = contactMessageService.searchByDateBetween(beginDateString, endDateString);
         return ResponseEntity.ok(contactMessages);
     }
@@ -164,6 +174,8 @@ public class ContactMessageController {
        return contactMessageService.getById(id);
    } */
 
+
+    // belirli bir ID'ye sahip olanı getirmek için
     @GetMapping("/getByIdParam") //http://localhost:8080/contactMessages/getByIdParam?contactMessageId=1
     public ResponseEntity<ContactMessage> getById(@RequestParam(value = "contactMessageId") Long contactMessageId){
         return ResponseEntity.ok(contactMessageService.getContactMessageById(contactMessageId));

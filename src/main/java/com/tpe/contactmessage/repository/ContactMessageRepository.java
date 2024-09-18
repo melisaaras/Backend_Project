@@ -28,7 +28,10 @@ public interface ContactMessageRepository extends JpaRepository<ContactMessage,L
 
     Page<ContactMessage>findBySubjectEquals(String subject, Pageable pageable);
 
-    @Query("select c from ContactMessage c where FUNCTION('DATE', c.dateTime) between ?1 and ?2") //function, localdatetime türüdndeki datetime değişkeninin sadece dateini getirmek, timeı getirmemek
+
+
+
+    @Query("select c from ContactMessage c where FUNCTION('DATE', c.dateTime) between ?1 and ?2") //FUNCTION('DATE', c.dateTime) ifadesi, c.dateTime alanının tarih kısmını alır, yani zaman bilgisini atar ve sadece tarihi kullanır.
     List<ContactMessage> findMessagesBetweenDates(LocalDate beginDate, LocalDate endDate);
     //DBde localdate türü yok, localdatetime var. çünkü değişkenimizi öyle kaydetmiştik.
 }

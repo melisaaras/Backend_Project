@@ -40,9 +40,10 @@ public class ContactMessageService {
 
 
     //14.ADIM:SAVE İŞLEMİ
+    //Bu metodun amacı, bir ContactMessageRequest nesnesini (kullanıcıdan gelen veri) alıp, bunu bir ContactMessage nesnesine dönüştürmek, bu nesneyi veritabanına kaydetmek ve başarılı bir işlem mesajı ile birlikte kaydedilen veriyi içeren bir yanıt döndürmektir.
     public ResponseMessage<ContactMessageResponse> save(ContactMessageRequest contactMessageRequest) { //Converts the request data into a ContactMessage entity.Saves the entity to the database.Returns a success message along with the saved data.
-        ContactMessage contactMessage =  createContactMessage.requestToContactMessage(contactMessageRequest); //dtoyu pojoya çeviren methodu çağırdık. //dbe kaydederken
-        ContactMessage savedData =  contactMessageRepository.save(contactMessage);
+        ContactMessage contactMessage =  createContactMessage.requestToContactMessage(contactMessageRequest); //dtoyu pojoya çeviren methodu çağırdık.
+        ContactMessage savedData =  contactMessageRepository.save(contactMessage); //dbe kaydettik
 
         return ResponseMessage.<ContactMessageResponse>builder() //Genericde builder kullanımı.
                 // Responsemessage ile sarmalama yapmamız lazım
@@ -62,6 +63,7 @@ public class ContactMessageService {
 
         Pageable pageable = PageRequest.of(page, size, Sort.by(sort).ascending()); //sayfalama teknolojisiyle yazıyorsak, data domainden import etmemiz gerekir. ascending olarak sıralanmasını istedik.
 
+        //Sıralama Yönünü Kontrol Etme
         //type değeri asc değil de desc ise, desc olarak gönder dedik.
         if (Objects.equals(type, "desc")){ //object classının equals methodu, null safetir. type null bile olsa kıyaslama yapar ve null döndürür.
             //type.equals("desc")-->nesnenin equals methodunu çağırırsanız, type null iken, null olan değeri işleleme soktuğumuzdan NullPointerException  alırsınız. yani null safe değildir.
@@ -70,7 +72,8 @@ public class ContactMessageService {
 
         }
 
-        return contactMessageRepository.findAll(pageable).map(createContactMessage::contactMessageToResponse); //bütün contactmessageleri sayafalama teknolojisiyle gönderir.
+        return contactMessageRepository.findAll(pageable).map(createContactMessage::contactMessageToResponse); //pojoyu dtoya çevirme
+        //bütün contactmessageleri sayafalama teknolojisiyle gönderir.
         //map, tür dönüşümünü sağlar. findalla gelen bütün pojoları createContactMessage classının contactMessageToResponse, methoduna argüman olarak döndürür ve ordan gelen DTOları returnlüyor.
 
     }
@@ -159,7 +162,7 @@ public class ContactMessageService {
 
     public List<ContactMessage> searchByDateBetween(String beginDateString, String endDateString) {
         try {
-            LocalDate beginDate = LocalDate.parse(beginDateString); //string ifadeler parse methoduyla localdate türünüe çevrilir.
+            LocalDate beginDate = LocalDate.parse(beginDateString); //string ifadeler parse methoduyla localdate türüne çevrilir.
             LocalDate endDate = LocalDate.parse(endDateString);
             return contactMessageRepository.findMessagesBetweenDates(beginDate, endDate);
         } catch (DateTimeParseException e) {

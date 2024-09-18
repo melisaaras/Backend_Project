@@ -64,42 +64,44 @@ public class TeacherService {
 
 
 
+    // belirli bir öğretmenin (advisor) danışmanı olduğu öğrencilerin listesini döner.
     public List<StudentResponse> getAllStudentByAdvisorUsername(String userName) {
 
-        User teacher = methodHelper.isUserExistByUsername(userName);
-        methodHelper.checkAdvisor(teacher);
+        User teacher = methodHelper.isUserExistByUsername(userName);//öğretmenin kullanıcı adını alır.Eğer öğretmen bulunursa, teacher adlı bir User nesnesine atanır. Bu nesne, öğretmenin bilgilerini içerir.
+        methodHelper.checkAdvisor(teacher); //bulunan kullanıcının gerçekten bir danışman öğretmen olup olmadığını kontrol eder.kullanıcı danışman değilse, checkadvisorda bir hata fırlatır
 
-        return userRepository.findByAdvisorTeacherId(teacher.getId())
+        return userRepository.findByAdvisorTeacherId(teacher.getId())// danışman öğretmenin Id bilgisiyle ilişkili öğrenciler veritabanından getirilir.Burada teacher.getId() ile öğretmenin veritabanındaki benzersiz kimliği (ID) kullanılır.
                 .stream()
-                .map(userMapper::mapUserToStudentResponse)
-                .collect(Collectors.toList());
+                .map(userMapper::mapUserToStudentResponse)//userrepositorydan data çektiğimiz için pojo-->dto dönüşümü
+                .collect(Collectors.toList());//Dönüştürülen veriler liste haline getirilir
     }
 
 
+    // öğretmen bilgilerini güncellemek ve sonuç olarak güncellenmiş öğretmen bilgilerini istemciye döndürmektir.
     // Not: updateTeacher() **********************************************************
     public ResponseMessage<TeacherResponse> updateTeacherForManagers(TeacherRequest teacherRequest, Long userId) {
         User user = methodHelper.isUserExist(userId);
         // !!! Parametrede gelen id bir teacher a ait degilse exception firlatiliyor
-        methodHelper.checkRole(user,RoleType.TEACHER);
+        methodHelper.checkRole(user,RoleType.TEACHER); //sadece öğretmen bilgilerini güncellemeye yetkili kullanıcıların işlem yapmasını sağlar.
 
         //!!! TODO: LessonProgramlar getiriliyor
 
         // !!! unique kontrolu
-        uniquePropertyValidator.checkUniqueProperties(user, teacherRequest);
-        // !!! DTO --> POJO
+        uniquePropertyValidator.checkUniqueProperties(user, teacherRequest);//veri tutarlılığını ve bütünlüğünü sağlamaya yönelik bir önlem
+        // !!! TeacherRequest DTO'sunu bir User POJO'suna dönüştürür.
         User updatedTeacher = userMapper.mapTeacherRequestToUpdatedUser(teacherRequest, userId);
         // !!! props. that does n't exist in mappers
-        updatedTeacher.setPassword(passwordEncoder.encode(teacherRequest.getPassword()));
+        updatedTeacher.setPassword(passwordEncoder.encode(teacherRequest.getPassword())); //Şifreyi passwordEncoder ile şifreler ve updatedTeacher nesnesine atar. Bu, güvenlik amacıyla yapılır ve şifrelerin veritabanında düz metin olarak saklanmamasını sağlar.
         // !!! TODO: LessonProgram sonrasi eklenecek
 
-        updatedTeacher.setUserRole(userRoleService.getUserRole(RoleType.TEACHER));
+        updatedTeacher.setUserRole(userRoleService.getUserRole(RoleType.TEACHER)); //öğretmen rolünü güncellenmiş kullanıcıya atar
 
-        User savedTeacher = userRepository.save(updatedTeacher);
+        User savedTeacher = userRepository.save(updatedTeacher); // veritabanındaki öğretmen kaydını günceller.
 
         return ResponseMessage.<TeacherResponse>builder()
-                .object(userMapper.mapUserToTeacherResponse(savedTeacher))
-                .message(SuccessMessages.TEACHER_UPDATE)
-                .httpStatus(HttpStatus.OK)
+                .object(userMapper.mapUserToTeacherResponse(savedTeacher))//Güncellenmiş öğretmen bilgilerini içeren TeacherResponse DTO'su.
+                .message(SuccessMessages.TEACHER_UPDATE)// İşlemin başarılı olduğunu belirten bir başarı mesajı.
+                .httpStatus(HttpStatus.OK) //HTTP yanıt kodu olarak 200 OK döndürülür.
                 .build();
     }
 
@@ -147,10 +149,11 @@ public class TeacherService {
         userRepository.save(teacher);
 
         // !!! silinen advisor Teacherlarin Student lari varsa bu iliskinin de koparilmasi gerekiyor
-        List<User> allStudents = userRepository.findByAdvisorTeacherId(teacherId);
+        List<User> allStudents = userRepository.findByAdvisorTeacherId(teacherId); //, teacherId ile ilişkilendirilmiş tüm öğrencileri veritabanından alır.findByAdvisorTeacherId metodunun amacı, belirli bir öğretmeni danışman olarak atanmış tüm öğrencileri getirmektir.
         if(!allStudents.isEmpty()) {
             allStudents.forEach(students -> students.setAdvisorTeacherId(null));
-        }
+        }//danışman öğretmene atanmış öğrenci varsa (!allStudents.isEmpty()), her öğrencinin advisorTeacherId özelliğini null olarak ayarlar. Bu, öğrencilerin danışman öğretmenle olan ilişkisinin kaldırılması anlamına gelir.
+        //forEach Döngüsü: Öğrencilerin her birini döngüye alır ve setAdvisorTeacherId(null) çağrısı ile ilişkiyi temizler.
 
         return ResponseMessage.<UserResponse>builder()
                 .message(SuccessMessages.ADVISOR_TEACHER_DELETE)
