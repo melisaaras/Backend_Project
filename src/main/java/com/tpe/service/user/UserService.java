@@ -50,9 +50,10 @@ public class UserService {
 
 
 
-    //DBdeki username,password,ssn,phonenumber,mailin unique olup olmadığının kontrolü
+
     public ResponseMessage<UserResponse> saveUser(UserRequest userRequest, String userRole) {
 
+        //DBdeki username,password,ssn,phonenumber,mailin unique olup olmadığının kontrolü
         uniquePropertyValidator.checkDuplicate(//DBdeki username,password,ssn,phonenumber,mailin unique olup olmadığının kontrolü., veri tutarlılığını sağlamak ve aynı bilgileri birden fazla kez girmeyi engellemek için kullanılır.
                 userRequest.getUsername(),
                 userRequest.getSsn(),
@@ -232,6 +233,10 @@ public class UserService {
         return userRepository.countAdmin(RoleType.ADMIN);
     }
 
+
+    public User getTeacherByUsername(String teacherUsername){
+        return userRepository.findByUsername(teacherUsername);
+    }
 
 
 }

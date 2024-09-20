@@ -7,6 +7,7 @@ import com.tpe.payload.response.business.LessonResponse;
 import com.tpe.service.business.LessonService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,7 +25,7 @@ public class LessonController {
     //lessonları save edecek method
     @PostMapping("/save")// http://localhost:8080/lessons/save  + POST + JSON
     @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
-    private ResponseMessage<LessonResponse> saveLesson(@RequestBody @Valid LessonRequest lessonRequest){
+    public ResponseMessage<LessonResponse> saveLesson(@RequestBody @Valid LessonRequest lessonRequest){
 
     return lessonService.saveLesson(lessonRequest);
 
@@ -68,7 +69,17 @@ public class LessonController {
         return lessonService.getLessonByLessonIdSet(idSet);
     }
 
+
+
+    // belirli yetkilere sahip kullanıcıların (ADMIN, MANAGER, ASSISTANT_MANAGER) bir dersi güncelleyebilmesi
     // Not: ODEVVV UpdateById() *************************
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
+    @PutMapping("/update/{lessonId}") // http://localhost:8080/lessons/update/1
+    public ResponseEntity<LessonResponse> updateLessonById(@PathVariable Long lessonId,
+                                                           @RequestBody LessonRequest lessonRequest){
+        return ResponseEntity.ok(lessonService.updateLessonById(lessonId, lessonRequest));//Güncelleme işlemi başarılı olursa, ResponseEntity.ok() kullanılarak HTTP 200 OK cevabı döndürülür ve yanıtın içinde güncellenmiş dersi içeren LessonResponse nesnesi yer alır.
+    }
+
 
 
 

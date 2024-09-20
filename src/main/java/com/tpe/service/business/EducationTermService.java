@@ -110,6 +110,12 @@ public class EducationTermService {
                 new ResourceNotFoundException(String.format(ErrorMessages.EDUCATION_TERM_NOT_FOUND_MESSAGE, id)));
     }
 
+
+    //isEducationTermExist gömerek encapsulation yaparak çağırdık. başka birservicee education term döndüren bir methodu kullanım yetkisi veriyoruz, hangi değişkenlerin kullanıldığını, exception fırklatıp fırlatmadığıyla ilgili bilgi vermiyoruz. yukardaki method private olduğunu için de görünmez. private olan methodları public methodlar içinde gömerek kullanıma sunmakla encapsulation yapmış oluruz.
+    public EducationTerm getEducationTermById(Long id){
+        return isEducationTermExist(id);
+    }
+
     public List<EducationTermResponse> getAllEducationTerms() {
         return educationTermRepository.findAll()//tüm eğitim dönemlerini veritabanından alır ve bunları DTO'ya (EducationTermResponse) dönüştürerek istemciye döner.
                 .stream()

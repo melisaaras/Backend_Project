@@ -84,7 +84,7 @@ public class LessonService {
 
 
     //lesson var mı yok mu kontrolü yapan yardımcı method
-    private Lesson isLessonExistById(Long id){
+    public Lesson isLessonExistById(Long id){
         return lessonRepository.findById(id).orElseThrow(()->
                 new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_LESSON_MESSAGE,id)));
     }
@@ -120,5 +120,30 @@ public class LessonService {
         return idSet.stream() // Stream<Long>
                 .map(this::isLessonExistById) //map methodunu kullandığımız zaman parantez içine geleni hemen execute olabilecek bir şey yazmanız gerekir.this; yukardan gelen idyi isLessonExistById methoduna argüman olarak gönderir.
                 .collect(Collectors.toSet());
+    }
+
+
+    //belirli bir lessonId'ye sahip dersi güncelleyip, veritabanına kaydettikten sonra güncellenmiş dersin yanıtını döndürmek
+    public LessonResponse updateLessonById(Long lessonId, LessonRequest lessonRequest) {
+
+        Lesson lesson = isLessonExistById(lessonId);
+        // !!! requeste ders ismi degisti ise unique olmasi gerekiyor kontrolu
+        //isLessonExistById(lessonId) metodu, dersin veritabanında olup olmadığını kontrol eder ve eğer varsa, bu dersi döner.
+
+        if(
+                !(lesson.getLessonName().equals(lessonRequest.getLessonName())) && // requestten gelen ders ismi DB deki ders isminden farkli ise
+                        (lessonRepository.existsByLessonName(lessonRequest.getLessonName())) // Derived Query
+        ) {
+            throw new ConflictException(
+                    String.format(ErrorMessages.ALREADY_REGISTER_LESSON_MESSAGE,lessonRequest.getLessonName()));
+        }
+        // !!! DTO --> POJO
+        Lesson updatedLesson = lessonMapper.mapLessonRequestToUpdatedLesson(lessonId, lessonRequest);
+
+        updatedLesson.setLessonPrograms(lesson.getLessonPrograms()); //Güncelleme sırasında dersin program bilgilerinin kaybolmasını önlemek.Eğer bu adım yapılmazsa, dersin programları (lessonPrograms) güncellenen ders üzerinde null olabilir. Bu nedenle, önceki dersi (lesson) programları, yeni güncellenen ders nesnesine aktarılır.
+
+        Lesson savedLesson = lessonRepository.save(updatedLesson); //Güncellenmiş dersi veritabanına kaydetmek
+
+        return lessonMapper.mapLessonToLessonResponse(savedLesson);// kaydedilen Lesson nesnesini bir LessonResponse nesnesine dönüştürür ve yanıt olarak döner.
     }
 }

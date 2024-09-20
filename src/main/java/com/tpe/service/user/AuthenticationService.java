@@ -48,7 +48,6 @@ public class AuthenticationService {
 
     public ResponseEntity<AuthResponse> authenticateUser(LoginRequest loginRequest) {  // `LoginRequest` (kullanıcı adı ve şifre) alarak kullanıcının kimliğini doğrular ve başarı durumunda `AuthResponse` döner.
 
-
         // anlık olarak login işlemini gerçekleştiren kullanıcının gönderdiği username ve password bilgilerini alıyoruz.
         String username = loginRequest.getUsername();
         String password = loginRequest.getPassword();

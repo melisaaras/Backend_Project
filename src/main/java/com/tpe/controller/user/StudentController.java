@@ -33,7 +33,7 @@ public class StudentController {
     // !!! ogrencinin kendisini update etme islemi, passwordü olmayan bir dto classı oluşturalacak
 
     @PreAuthorize("hasAnyAuthority('STUDENT')") //Bu, sadece 'STUDENT' yetkisine sahip kullanıcıların bu endpoint'i çağırabileceğini belirtir. Eğer kullanıcının bu otoritesi yoksa, yetkilendirme hatası (403 Forbidden) dönecektir.
-    @PatchMapping ("/update") //// http://localhost:8080/user/updateStudent
+    @PatchMapping ("/update") //// http://localhost:8080/student/updateStudent
     public ResponseEntity <String> updateStudent (@RequestBody @Valid StudentRequestWithoutPassword studentRequestWithoutPassword,
                                                   HttpServletRequest request){
         return studentService.updateStudent(studentRequestWithoutPassword, request);
@@ -44,7 +44,7 @@ public class StudentController {
     // Not: updateStudent() **********************************************************
     // yöneticilerin öğrenciyi update etme işlemi, passwordü de güncelleyebilmeli
 
-    @PutMapping("/update/{userId}")  // http://localhost:8080/user/update/2
+    @PutMapping("/update/{userId}")  // http://localhost:8080/student/update/2
 @PreAuthorize("hasAnyAuthority ('ADMIN','MANAGER','ASSISTANT_MANAGER')")
         public ResponseMessage<StudentResponse> updateStudentForManagers(@PathVariable Long userId, @RequestBody @Valid StudentRequest studentRequest){
 

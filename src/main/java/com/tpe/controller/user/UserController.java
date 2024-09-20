@@ -24,7 +24,10 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/save/{userRole}") // http://localhost:8080/user/save/Admin  + POST + JSON // HTTP POST isteği ile /save/{userRole} yoluna yapılan çağrılar bu metoda yönlendirilir.
+
+    //kullanıcıyı kaydetme
+    @PostMapping("/save/{userRole}") // http://localhost:8080/user/save/Admin  + POST + JSON
+    // HTTP POST isteği ile /save/{userRole} yoluna yapılan çağrılar bu metoda yönlendirilir.
     @PreAuthorize("hasAnyAuthority('ADMIN')") // Sadece 'ADMIN' yetkisine sahip kullanıcılar bu metoda erişebilir.
     public ResponseEntity<ResponseMessage<UserResponse>> saveUser(
             @RequestBody @Valid UserRequest userRequest, @PathVariable String userRole){// URL'den dinamik olarak alınan userRole parametresi metoda iletilir.
