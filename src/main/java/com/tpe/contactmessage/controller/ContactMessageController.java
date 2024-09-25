@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -21,7 +22,7 @@ import java.util.List;
 
 @RestController //Marks the class as a controller that handles HTTP requests and returns JSON responses.
 @RequestMapping("/contactMessages") //Gelen requestler içerisinde contactMessages varsa (get veya post ile gelmiş olması önemli değil) direkt bu classın içerisine yönlendirir
-// This annotation maps HTTP requests to handler(eşleştirmek) methods of MVC and REST controllers. Here, it specifies that all endpoints in this controller will start with /contactMessages.Sets the base URL for all endpoints in this controller to /contactMessages.
+// This annotation maps HTTP requests to handler methods of MVC and REST controllers. Here, it specifies that all endpoints in this controller will start with /contactMessages.Sets the base URL for all endpoints in this controller to /contactMessages.
 @RequiredArgsConstructor // Automatically creates a constructor for the ContactMessageService field, so it can be used in the class.
 public class ContactMessageController {
 
@@ -35,6 +36,8 @@ public class ContactMessageController {
     @PostMapping("/save") //http://localhost:8080/contactMessages/save + POST //Bu path gelirse ve path gelirken Post mapping kullanıyorsa bu methoda yönlendiriyoruz.
     // Handles POST requests to /contactMessages/save. The method takes in a contact message request, validates it, and then saves it using the service layer. It returns a response message with the saved data.
     public ResponseMessage<ContactMessageResponse> saveContact(@RequestBody @Valid ContactMessageRequest contactMessageRequest){
+
+        //Save methodunu security katmanındaki websecurityconfig classında securityden muaf kıldık.login olan veya olmayan herkes pathe girebilir.bu classta save dışındaki diğer pathlere sadece admin, manager ve assistant manager erişebilir.
 
         //@RequestBody: This annotation binds the HTTP request body to the contactMessageRequest object.@Valid: Ensures that the contactMessageRequest object is validated before the method is executed. If validation fails, an error response is sent automatically.ResponseMessage<ContactMessageResponse>: This method returns a custom response type that includes both the message and the contact message data.
         return contactMessageService.save(contactMessageRequest);
@@ -53,6 +56,7 @@ public class ContactMessageController {
     //15.ADIM: BÜTÜN CONTACTMESSAGELARI PAGEABLE VERSİYONLA GETALL.SERVİCE TARAFINDA BU YAPIYI PAGEABLE OLARAK DBDEN ÇEKİLİP CLİENTA GÖNDERİLMESİNİ SAĞLAMAK İÇİN.
     @GetMapping("/getAll") //http://localhost:8080/contactMessages/getAll + GET
     // This annotation maps HTTP GET requests to the getAl method. When a GET request is made to /contactMessages/getAll, this method is executed.You can control the page number, size, sorting field, and sorting direction using query parameters.
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
     public Page<ContactMessageResponse> getAl(
             @RequestParam(value = "page", defaultValue = "0") int page, //kaç sayfa olsun
             @RequestParam (value = "size", defaultValue = "10") int size, ///her sayfada kaç tane veri olsun
@@ -70,6 +74,7 @@ public class ContactMessageController {
     // kullanıcıların belirli bir e-posta adresine sahip iletişim mesajlarını ararken verileri kolayca sayfalamalarına ve sıralamalarına olanak sağlar
     //17.ADIM: EMAİL ADRESİNDEN GELEN VERİLERİ GETİR
     @GetMapping("/searchByEmail") //http://localhost:8080/contactMessages/searchByEmail?email=aaa@bb.com //Handles GET requests to /contactMessages/searchByEmail. It searches for contact messages by a specific email and returns the results in a paginated(sayfalandırılmış) format. Similar to getAll, you can control the page, size, and sorting.
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
     public Page<ContactMessageResponse> searchByEmail(
             @RequestParam(value = "email") String email,
             @RequestParam(value = "page", defaultValue = "0") int page,
@@ -99,6 +104,7 @@ public class ContactMessageController {
 
     //kullanıcıların konu başlığına göre arama yapabilmesini sağlar ve arama sonuçlarını sayfa numarası, sayfa boyutu, sıralama alanı ve sıralama yönüne göre filtrelemeye olanak tanır.
     @GetMapping("/searchBySubject")// http://localhost:8080/contactMessages/searchBySubject?subject=deneme
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
     public Page<ContactMessageResponse> searchBySubject(
             @RequestParam(value = "subject") String subject,
             @RequestParam(value = "page",defaultValue = "0") int page,
@@ -128,6 +134,7 @@ public class ContactMessageController {
 
     // kullanıcıların bir başlangıç ve bitiş tarihi belirleyerek bu tarihler arasındaki iletişim mesajlarını almasını sağlar.
     @GetMapping("/searchBetweenDates") // http://localhost:8080/contactMessages/searchBetweenDates?beginDate=2023-09-13&endDate=2023-09-15
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
     public ResponseEntity<List<ContactMessage>> searchByDateBetween( //Clienta döndürdüğünüz nesnelerde, gizli tutulmasını istediğiniz bilgiler yoksa (password gibi) entity döndürebiliriz.
             @RequestParam(value = "beginDate") String beginDateString,
             @RequestParam(value = "endDate") String endDateString){
@@ -146,6 +153,7 @@ public class ContactMessageController {
    }*/
 
   @DeleteMapping("/deleteByIdParam")  //http://localhost:8080/contactMessages/deleteByIdParam?contactMessageId=1
+  @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
   public ResponseEntity<String> deleteById(@RequestParam(value = "contactMessageId") Long contactMessageId){ //aslında deletelerde string ifade veya entity döndürmeyz, http ststus kod 204 döndürürüz.
       return ResponseEntity.ok(contactMessageService.deleteById(contactMessageId));
   }
@@ -160,6 +168,7 @@ public class ContactMessageController {
     }*/
 
     @DeleteMapping("/deleteById/{contactMessageId}")//http://localhost:8080/contactMessages/deleteById/2
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
     public ResponseEntity<String> deleteByIdPath(@PathVariable Long contactMessageId){
         return ResponseEntity.ok(contactMessageService.deleteById(contactMessageId));
     }
@@ -177,6 +186,7 @@ public class ContactMessageController {
 
     // belirli bir ID'ye sahip olanı getirmek için
     @GetMapping("/getByIdParam") //http://localhost:8080/contactMessages/getByIdParam?contactMessageId=1
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
     public ResponseEntity<ContactMessage> getById(@RequestParam(value = "contactMessageId") Long contactMessageId){
         return ResponseEntity.ok(contactMessageService.getContactMessageById(contactMessageId));
     }
@@ -191,6 +201,7 @@ public class ContactMessageController {
     }*/
 
     @GetMapping("/getById/{contactMessageId}")//http://localhost:8080/contactMessages/getById/1
+    @PreAuthorize("hasAnyAuthority('ADMIN','MANAGER','ASSISTANT_MANAGER')")
     public ResponseEntity<ContactMessage> getByIdPath(@PathVariable Long contactMessageId){
         return ResponseEntity.ok(contactMessageService.getContactMessageById(contactMessageId));
     }

@@ -28,7 +28,7 @@ public interface UserRepository extends JpaRepository<User,Long> {
     boolean existsByEmail(String email);
 
 
-    @Query("select u from User u where u.userRole.rolename = :rolName")
+    @Query("select u from User u where u.userRole.roleName = :roleName")
    Page <User> findByUserByRole(String roleName, Pageable pageable);
 
 
@@ -50,5 +50,6 @@ public interface UserRepository extends JpaRepository<User,Long> {
     @Query(value = "select (count (u)>0) from User u where u.userRole.roleType = ?1")
     boolean findStudent(RoleType roleType);
 
-
+    @Query("select u from User u where u.id in :studentIds")
+    List<User> findByIdsEquals(Long[] studentIds);
 }

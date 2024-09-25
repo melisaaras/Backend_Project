@@ -30,11 +30,18 @@ public class SuccessMessages {
 
 
     public static final String LESSON_PROGRAM_SAVE = "Lesson PROGRAM is Saved";
-    public static final String LESSON_PROGRAM_FOUND = "Lesson PROGRAM is Found Successfully";
-    public static final String LESSON_PROGRAM_DELETE = "Lesson PROGRAM is deleted successfully";
+    public static final String LESSON_PROGRAM_ADD_TO_STUDENT = "Lesson Program added to student";    public static final String LESSON_PROGRAM_DELETE = "Lesson PROGRAM is deleted successfully";
 
 
     public static final String STUDENT_INFO_SAVE = "StudentInfo is Saved";
-    public static final String STUDENT_INFO_FOUND = "StudentInfo is Found Successfully";
+    public static final String STUDENT_INFO_UPDATE = "StudentInfo is Updated Successfully";
     public static final String STUDENT_INFO_DELETE = "StudentInfo is deleted successfully";
+
+    public static final String MEET_SAVE = "MEET is Saved";
+    public static final String MEET_UPDATE = "MEET is Updated Successfully";
+    public static final String MEET_FOUND = "MEET is Found Successfully";
+    public static final String MEET_DELETE = "MEET is deleted successfully";
+
+
+
 }

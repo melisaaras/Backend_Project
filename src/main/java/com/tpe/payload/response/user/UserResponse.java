@@ -9,7 +9,6 @@ import lombok.experimental.SuperBuilder;
 
 @Getter
 @Setter
-@AllArgsConstructor
 @NoArgsConstructor
 @JsonInclude(JsonInclude.Include.NON_NULL) //JSON serileştirme işlemi sırasında, değerleri null olan alanların dahil edilmemesini sağlar. Bu, JSON çıktısında sadece dolu alanların görünmesini sağlar.
 @SuperBuilder

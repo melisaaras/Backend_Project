@@ -107,6 +107,7 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "meet_id")
 
     )
+
     private List<Meet> meetList;
 //meet tarafındaki jointable ile aynı tabloyu oluşturur. çünkü sütun isimleri aynı
 }

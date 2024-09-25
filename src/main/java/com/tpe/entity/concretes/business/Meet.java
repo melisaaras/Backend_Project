@@ -6,6 +6,7 @@ import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 
 //22.ADIM: MEET ENTİTY CLASS
@@ -27,10 +28,10 @@ public class Meet {
     private LocalDate date;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "US")
-    private LocalDate startTime;
+    private LocalTime startTime;
 
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm", timezone = "US")
-    private LocalDate stopTime;
+    private LocalTime stopTime;
 
     @ManyToMany //user tarafından baktığımızda birden fazla meet olabilir. meet tarafından baktığımızda ise yine birden fazla öğrenci katılabilir.
     @JoinTable( //meet hangi öğretmene ait

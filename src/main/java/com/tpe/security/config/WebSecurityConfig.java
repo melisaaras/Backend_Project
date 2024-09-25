@@ -107,6 +107,9 @@ public class WebSecurityConfig {
             "/js/**", //JavaScript dosyaları
             "/contactMessage/save", // İletişim mesajı kaydetme endpoint'i
             "/auth/login", // Giriş yapma endpoint'i
-            "/" //Ana URL
+            "/" ,//Ana URL
+            "/v3/api-docs/**", // eklenecek
+            "swagger-ui.html", // eklenecek
+            "/swagger-ui/**", // eklenecek
     };
 }

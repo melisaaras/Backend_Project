@@ -2,6 +2,7 @@ package com.tpe.service.business;
 import com.tpe.entity.concretes.business.EducationTerm;
 import com.tpe.entity.concretes.business.Lesson;
 import com.tpe.entity.concretes.business.LessonProgram;
+import com.tpe.exception.BadRequestException;
 import com.tpe.exception.ResourceNotFoundException;
 import com.tpe.payload.mappers.LessonProgramMapper;
 import com.tpe.payload.messages.ErrorMessages;
@@ -92,6 +93,18 @@ public class LessonProgramService {
                 new ResourceNotFoundException(String.format(ErrorMessages.NOT_FOUND_LESSON_PROGRAM_MESSAGE,id)));
     }
 
+    public Set<LessonProgram> getLessonProgramById(Set<Long> lessonIdSet){
+
+        Set<LessonProgram> lessonPrograms = lessonProgramRepository.getLessonProgramByLessonProgramIdList(lessonIdSet); // !!! JPQL
+
+        if(lessonPrograms.isEmpty()){
+            throw new BadRequestException(ErrorMessages.NOT_FOUND_LESSON_PROGRAM_MESSAGE_WITHOUT_ID_INFO);
+        }
+        return lessonPrograms;
+    }
+
+
+
     public List<LessonProgramResponse> getAllUnassigned() {
         return lessonProgramRepository.findByUsers_IdNull() //id değerleri null olan kullanıcıları getir
                 .stream()
@@ -131,4 +144,6 @@ public class LessonProgramService {
         return lessonProgramRepository.findAll(pageable)
                 .map(lessonProgramMapper::mapLessonProgramToLessonProgramResponse);
     }
+
+
 }

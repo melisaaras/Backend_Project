@@ -18,4 +18,9 @@ public class PageableHelper {
         }
         return pageable;
     }
+
+    //yukardaki methodla ismi aynı bu yüzden method signatureı değiştirmemiz gerekir.
+    public Pageable getPageableWithProperties(int page, int size){
+        return PageRequest.of(page, size, Sort.by("id").descending());
+    }
 }

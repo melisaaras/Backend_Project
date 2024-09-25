@@ -1,16 +1,21 @@
 
 package com.tpe.service.user;
 
+import com.tpe.entity.concretes.business.LessonProgram;
 import com.tpe.entity.concretes.user.User;
 import com.tpe.entity.enums.RoleType;
 import com.tpe.payload.mappers.UserMapper;
 import com.tpe.payload.messages.SuccessMessages;
+import com.tpe.payload.request.business.ChooseLessonProgramWithId;
 import com.tpe.payload.request.user.StudentRequest;
 import com.tpe.payload.request.user.StudentRequestWithoutPassword;
 import com.tpe.payload.response.ResponseMessage;
 import com.tpe.payload.response.user.StudentResponse;
 import com.tpe.repository.user.UserRepository;
+import com.tpe.service.business.LessonProgramService;
+import com.tpe.service.business.StudentInfoService;
 import com.tpe.service.helper.MethodHelper;
+import com.tpe.service.validator.DateTimeValidator;
 import com.tpe.service.validator.UniquePropertyValidator;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -19,6 +24,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -31,6 +37,9 @@ public class StudentService {
     private final PasswordEncoder passwordEncoder; //passwordü hashlemek için
     private UserRoleService userRoleService;
     private StudentRequest studentRequest;
+    private final LessonProgramService lessonProgramService;
+    private final DateTimeValidator dateTimeValidator;
+    //private final StudentInfoService studentInfoService;
 
 
     public ResponseMessage<StudentResponse> saveStudent(StudentRequest studentRequest) {
@@ -137,6 +146,38 @@ public class StudentService {
 
 
     }
+
+    // Not: addLessonProgramToStudentLessonsProgram() *************************
+    public ResponseMessage<StudentResponse> addLessonProgramToStudent(String userName,
+                                                                      ChooseLessonProgramWithId chooseLessonProgramWithId) {
+
+        // !!! username kontrolu
+        User student = methodHelper.isUserExistByUsername(userName);
+
+        // !!! talep edilen lessonProgramlar getiriliyor
+        Set<LessonProgram> lessonProgramSet =
+                lessonProgramService.getLessonProgramById(chooseLessonProgramWithId.getLessonProgramId());
+
+        // !!! mevcuttaki lessonProgramlar getiriliyor
+        Set<LessonProgram> studentCurrentLessonProgram = student.getLessonProgramList();
+
+        // !!! talep edilen ile mevcutta bir cakisma var mi kontrolu
+        dateTimeValidator.checkLessonPrograms(studentCurrentLessonProgram, lessonProgramSet);
+
+        studentCurrentLessonProgram.addAll(lessonProgramSet);
+        //we are updating the lesson program of the student
+        student.setLessonProgramList(studentCurrentLessonProgram);
+
+        User savedStudent = userRepository.save(student);
+
+        return ResponseMessage.<StudentResponse>builder()
+                .message(SuccessMessages.LESSON_PROGRAM_ADD_TO_STUDENT)
+                .object(userMapper.mapUserToStudentResponse(savedStudent))
+                .httpStatus(HttpStatus.OK)
+                .build();
+    }
+
+
 }
 
 
